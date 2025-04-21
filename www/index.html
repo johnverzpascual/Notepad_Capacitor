@@ -2,52 +2,193 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notepad App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https: 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com;">
+    <title>Notepad</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@capacitor/core@latest/dist/capacitor.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        // Initialize Capacitor
+        if (typeof Capacitor !== 'undefined') {
+            console.log('Capacitor is available');
+        } else {
+            console.error('Capacitor is not available');
+        }
+    </script>
+    <script src="js/app.js" defer></script>
 </head>
-<body class="bg-gray-100 h-screen">
-    <div class="container mx-auto px-4 py-8 h-full flex flex-col">
-        <!-- Header -->
-        <header class="mb-4">
-            <h1 class="text-3xl font-bold text-gray-800">Notepad</h1>
-        </header>
-
-        <!-- Main Content -->
-        <div class="flex-grow flex flex-col gap-4">
-            <!-- Note Title -->
-            <input 
-                type="text" 
-                id="noteTitle" 
-                placeholder="Note Title" 
-                class="w-full p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-            
-            <!-- Note Content -->
-            <textarea 
-                id="noteContent" 
-                placeholder="Start typing your note..." 
-                class="flex-grow w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            ></textarea>
-            
-            <!-- Action Buttons -->
-            <div class="flex gap-2">
-                <button 
-                    onclick="saveNote()" 
-                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    Save Note
+<body class="bg-gray-100 min-h-screen">
+    <!-- Main Content -->
+    <div class="h-screen flex flex-col">
+        <!-- Top Toolbar -->
+        <div class="bg-white border-b px-4 py-2 flex items-center space-x-2">
+            <div class="toolbar flex space-x-1 p-2 bg-gray-100 border-b">
+                <button class="toolbar-btn" data-format="bold" aria-label="Bold">
+                    <span class="material-icons">format_bold</span>
                 </button>
-                <button 
-                    onclick="newNote()" 
-                    class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                >
-                    New Note
+                <button class="toolbar-btn" data-format="italic" aria-label="Italic">
+                    <span class="material-icons">format_italic</span>
+                </button>
+                <button class="toolbar-btn" data-format="underline" aria-label="Underline">
+                    <span class="material-icons">format_underlined</span>
+                </button>
+                <button class="toolbar-btn" data-format="list" aria-label="Bullet List">
+                    <span class="material-icons">format_list_bulleted</span>
+                </button>
+                <button class="toolbar-btn" data-format="heading" aria-label="Heading">
+                    <span class="material-icons">title</span>
+                </button>
+                <div class="border-l mx-1 h-6"></div>
+                <button class="toolbar-btn" data-format="alignLeft" aria-label="Align Left">
+                    <span class="material-icons">format_align_left</span>
+                </button>
+                <button class="toolbar-btn" data-format="alignCenter" aria-label="Align Center">
+                    <span class="material-icons">format_align_center</span>
+                </button>
+                <button class="toolbar-btn" data-format="alignRight" aria-label="Align Right">
+                    <span class="material-icons">format_align_right</span>
+                </button>
+                <button class="toolbar-btn" data-format="alignJustify" aria-label="Justify">
+                    <span class="material-icons">format_align_justify</span>
                 </button>
             </div>
         </div>
+
+        <!-- Notes List View -->
+        <div id="notesListView" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-300 ease-in-out">
+            <div class="p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold text-gray-800">My Notes</h1>
+                    <button id="closeListView" class="text-gray-600 p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <input type="text" id="searchNotes" placeholder="Search notes..." 
+                       class="w-full px-4 py-2 rounded-lg border mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="notesList" class="space-y-2 overflow-y-auto pb-20" style="height: calc(100vh - 200px)">
+                    <!-- Notes will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Note Editor -->
+        <div class="flex-1 overflow-hidden flex flex-col">
+            <div class="p-4 flex justify-between items-center border-b">
+                <input type="text" id="noteTitle" placeholder="Note Title" 
+                       class="flex-1 text-xl font-bold focus:outline-none">
+                <button id="deleteNoteBtn" class="ml-2 p-2 text-red-500 hover:bg-red-50 rounded-full">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto px-4 pb-20">
+                <div id="noteContent" contenteditable="true" placeholder="Start typing your note..." 
+                     class="w-full h-full p-2 focus:outline-none"></div>
+            </div>
+            <div class="px-4 py-2 border-t bg-white text-sm text-gray-500 flex justify-between items-center">
+                <span id="lastSaved">Last saved: Never</span>
+                <span id="wordCount">0 words</span>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t z-50">
+            <div class="flex justify-around items-center p-3">
+                <button id="listViewBtn" class="p-2 text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <button id="newNoteBtn" class="bg-blue-500 text-white rounded-full p-3 -mt-8 shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </button>
+                <button id="saveNoteBtn" class="p-2 text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
     </div>
 
-    <script src="js/app.js"></script>
+    <style>
+        /* Toolbar buttons */
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background-color: white;
+            color: #4b5563;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toolbar-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .toolbar-btn.active {
+            background-color: #2563eb !important;
+            border-color: #2563eb !important;
+            color: white !important;
+        }
+
+        .material-icons {
+            font-size: 20px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        /* Note item styles */
+        .note-item {
+            @apply p-3 border-b last:border-b-0 active:bg-gray-100;
+        }
+        .note-item.active {
+            @apply bg-blue-50 border-l-4 border-blue-500;
+        }
+
+        /* Editor styles */
+        #noteContent {
+            min-height: 100%;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        #noteContent:empty:before {
+            content: attr(placeholder);
+            color: #9ca3af;
+        }
+        #noteContent:focus {
+            outline: none;
+        }
+
+        /* Prevent rubber-band scrolling */
+        body {
+            overscroll-behavior: none;
+        }
+
+        /* Fix bottom navigation */
+        .fixed {
+            position: fixed !important;
+        }
+
+        /* Z-index stacking */
+        #notesListView {
+            z-index: 1000;
+        }
+    </style>
 </body>
 </html> 
