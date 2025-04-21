@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="1080" height="1920" fill="#3B82F6"/>
+    
+    <!-- Logo Container -->
+    <g transform="translate(290, 710)">
+        <!-- Notepad -->
+        <rect x="0" y="0" width="500" height="500" rx="32" fill="white"/>
+        
+        <!-- Lines -->
+        <line x1="50" y1="150" x2="450" y2="150" stroke="#3B82F6" stroke-width="16"/>
+        <line x1="50" y1="200" x2="450" y2="200" stroke="#3B82F6" stroke-width="16"/>
+        <line x1="50" y1="250" x2="450" y2="250" stroke="#3B82F6" stroke-width="16"/>
+        <line x1="50" y1="300" x2="450" y2="300" stroke="#3B82F6" stroke-width="16"/>
+        <line x1="50" y1="350" x2="450" y2="350" stroke="#3B82F6" stroke-width="16"/>
+        
+        <!-- Spiral Binding -->
+        <path d="M0 0 L0 500" stroke="#3B82F6" stroke-width="32" stroke-linecap="round"/>
+    </g>
+    
+    <!-- App Name -->
+    <text x="540" y="1400" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">Notepad</text>
+</svg> 

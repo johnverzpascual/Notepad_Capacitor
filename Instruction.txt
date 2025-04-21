@@ -1,0 +1,11 @@
+INSTRUCTION:
+Build ANY of your Existing or Old Website or Web App Project to a Mobile App using CapacitorJS.
+Test the performance and responsiveness of your App before deployment.
+PROJECT REQUIREMENTS:
+Design/Create/Implement LOGO for your Mobile App.
+Design/Create/Implement SPLASH SCREEN for your Mobile App.
+SUBMISSION:
+Upload the following:
+Hyperlink of your Website/Web App.
+APK File
+GitHub repository of your CAPACITOR APP.
