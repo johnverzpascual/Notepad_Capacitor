@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notepad App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen">
+    <div class="container mx-auto px-4 py-8 h-full flex flex-col">
+        <!-- Header -->
+        <header class="mb-4">
+            <h1 class="text-3xl font-bold text-gray-800">Notepad</h1>
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col gap-4">
+            <!-- Note Title -->
+            <input 
+                type="text" 
+                id="noteTitle" 
+                placeholder="Note Title" 
+                class="w-full p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            
+            <!-- Note Content -->
+            <textarea 
+                id="noteContent" 
+                placeholder="Start typing your note..." 
+                class="flex-grow w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            ></textarea>
+            
+            <!-- Action Buttons -->
+            <div class="flex gap-2">
+                <button 
+                    onclick="saveNote()" 
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    Save Note
+                </button>
+                <button 
+                    onclick="newNote()" 
+                    class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
+                    New Note
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html> 
